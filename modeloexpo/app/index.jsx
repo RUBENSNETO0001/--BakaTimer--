@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
-// Importa o componente de gradiente
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function WelcomeScreen() {
@@ -16,9 +15,9 @@ export default function WelcomeScreen() {
 
             <View style={styles.content}>
                 <Text style={styles.title}>
-                    Bem-vindo à <Text style={styles.brandText}>Saphira</Text>
+                    Bem-vindo à <Text style={styles.brandText}>BakaTime</Text>
                 </Text>
-                <Text style={styles.subtitle}>O seu universo digital de documentação.</Text>
+                <Text style={styles.subtitle}>O BakaTimer é uma calculadora de maratona ultra minimalista e direta.</Text>
             </View>
 
             <TouchableOpacity
@@ -45,14 +44,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: '800',
         color: '#ffffff',
         textAlign: 'center',
         letterSpacing: 0.5,
     },
     brandText: {
-        color: '#818cf8',
+        color: '#f97316',
     },
     subtitle: {
         fontSize: 16,
