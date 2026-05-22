@@ -34,3 +34,25 @@ Este projeto foi desenvolvido utilizando o ecossistema moderno do React Native:
 - **Expo Framework** (Gerenciamento, build e execução ágil via Expo Go)
 - **JavaScript (ES6+) / TypeScript** (Lógica de estados e cálculos de tempo)
 - **React Hooks (`useState`)** (Manipulação de estado dinâmico na tela única)
+
+---
+
+## salva comandos caso precise
+
+porque a execução de scripts foi desabilitada neste sistema.
+- Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser     
+
+iniciar no celular no app do expo go 
+- npx expo start --tunnel
+
+---
+> PS C:\Users\Aluno\Documents\GitHub\--BakaTimer--\modeloexpo> npx expo start --tunnel     Need to install the following packages: expo@56.0.3 Ok to proceed? (y) npm warn deprecated uuid@7.0.3: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028). Starting project at C:\Users\Aluno\Documents\GitHub\--BakaTimer--\modeloexpo ConfigError: Cannot determine the project's Expo SDK version because the module `expo` is not installed. Install it with `npm install expo` and try again. npm notice npm notice New minor version of npm available! 11.13.0 -> 11.15.0 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.15.0 npm notice To update run: npm install -g npm@11.15.0 npm notice
+
+##  1. Apague a pasta de dependências antigas e travas (caso existam de forma corrompida) e
+- Remove-Item -Recurse -Force node_modules, package-lock.json
+
+## 2. Instale todas as dependências do projeto do zero de forma limpa e
+- npm install
+
+## 3. Force a instalação e sincronização correta do pacote do Expo local e
+- npx expo install
