@@ -23,18 +23,25 @@ export default function HomeScreen() {
         setResult(null);
 
         try {
-            const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchQuery)}&limit=1`);
+            const response = await fetch(
+                `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchQuery)}&limit=10&type=tv`
+            );
             const json = await response.json();
 
             if (json.data && json.data.length > 0) {
-                const anime = json.data[0];
-                const durationMatch = anime.duration ? anime.duration.match(/\d+/) : null;
+                const query = searchQuery.trim().toLowerCase();
+                const best = json.data.find(a =>
+                    a.title.toLowerCase() === query ||
+                    a.title_english?.toLowerCase() === query
+                ) || json.data[0];
+
+                const durationMatch = best.duration ? best.duration.match(/\d+/) : null;
                 const detectedMinutes = durationMatch ? parseInt(durationMatch[0]) : 24;
 
                 setAnimeData({
-                    title: anime.title,
-                    episodes: anime.episodes,
-                    imageUrl: anime.images.jpg.image_url,
+                    title: best.title,
+                    episodes: best.episodes,
+                    imageUrl: best.images.jpg.image_url,
                     duration: detectedMinutes,
                 });
             } else {
@@ -62,7 +69,7 @@ export default function HomeScreen() {
         }
 
         const remainingEpisodes = total - current;
-        let timePerEpisode = animeData.duration; 
+        let timePerEpisode = animeData.duration;
 
         if (skipOpenings && timePerEpisode > 5) timePerEpisode -= 3;
         if (skipRecaps && timePerEpisode > 5) timePerEpisode -= 2;
@@ -77,7 +84,7 @@ export default function HomeScreen() {
     return (
         <LinearGradient colors={COLORS.backgroundGradient} style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#0f172a" />
-            
+
             <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                 <Text style={styles.headerTitle}>Baka<Text style={styles.brandText}>Timer</Text></Text>
                 <Text style={styles.headerSubtitle}>Arquitetura componentizada e limpa</Text>
@@ -85,7 +92,7 @@ export default function HomeScreen() {
                 <View style={styles.card}>
                     <Text style={styles.label}>Buscar Anime</Text>
                     <View style={styles.searchRow}>
-                        <TextInput 
+                        <TextInput
                             style={[styles.input, { flex: 1, marginBottom: 0 }]}
                             placeholder="Ex: Naruto, Jujutsu, Cyberpunk..."
                             placeholderTextColor="#64748b"
@@ -101,10 +108,10 @@ export default function HomeScreen() {
                 </View>
 
                 {animeData && (
-                    <AnimeCard 
-                        animeData={animeData} 
-                        currentEp={currentEp} 
-                        setCurrentEp={setCurrentEp} 
+                    <AnimeCard
+                        animeData={animeData}
+                        currentEp={currentEp}
+                        setCurrentEp={setCurrentEp}
                     />
                 )}
 
@@ -112,14 +119,14 @@ export default function HomeScreen() {
                     <>
                         <View style={styles.card}>
                             <Text style={styles.cardTitle}>Configurações da Maratona</Text>
-                            
-                            <OptionCheckbox 
+
+                            <OptionCheckbox
                                 label="Pular Openings/Endings (-3 min) e"
                                 checked={skipOpenings}
                                 onPress={() => setSkipOpenings(!skipOpenings)}
                             />
 
-                            <OptionCheckbox 
+                            <OptionCheckbox
                                 label="Pular Recaps (-2 min) e"
                                 checked={skipRecaps}
                                 onPress={() => setSkipRecaps(!skipRecaps)}
