@@ -56,3 +56,8 @@ iniciar no celular no app do expo go
 
 ## 3. Force a instalação e sincronização correta do pacote do Expo local e
 - npx expo install
+
+
+## Caso de algum error no Ngrok
+
+- npx ngrok config add-authtoken 2eEOvbibw60y01yZ1BRkA2ejgfG_3i7BKuZBR3rzKCE4cGwdS

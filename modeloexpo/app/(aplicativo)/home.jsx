@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator } from 'react-native';
+import {
+    View, Text, StyleSheet, TextInput, TouchableOpacity,
+    ScrollView, StatusBar, ActivityIndicator
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from './css/themes';
 import OptionCheckbox from './components/OptionCheckbox';
 import AnimeCard from './components/AnimeCard';
+import AbaCalendario from './components/AbaCalendario';
+
+const TABS = [
+    { key: 'home', label: '🏠 Início' },
+    { key: 'calendario', label: '📅 Calendário' },
+];
 
 export default function HomeScreen() {
+    const [activeTab, setActiveTab] = useState('home');
+
     const [searchQuery, setSearchQuery] = useState('');
     const [currentEp, setCurrentEp] = useState('');
     const [animeData, setAnimeData] = useState(null);
@@ -78,93 +89,206 @@ export default function HomeScreen() {
         const hours = Math.floor(totalMinutes / 60);
         const minutes = totalMinutes % 60;
 
-        setResult(hours > 0 ? `Faltam ${hours}h e ${minutes}min para você terminar!` : `Faltam ${minutes} minutos para você terminar!`);
+        setResult(hours > 0
+            ? `Faltam ${hours}h e ${minutes}min para você terminar!`
+            : `Faltam ${minutes} minutos para você terminar!`
+        );
     };
+
+    const addAnimeToCalendar = () => {
+        const total = animeData?.episodes;
+        if (!total) {
+            setResult('Não é possível adicionar animes sem número total de episódios!');
+            return null;
+        }
+
+        return total;
+        setResult("Adicionado!!");
+    }
 
     return (
         <LinearGradient colors={COLORS.backgroundGradient} style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#0f172a" />
 
-            <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                <Text style={styles.headerTitle}>Baka<Text style={styles.brandText}>Timer</Text></Text>
-                <Text style={styles.headerSubtitle}>Arquitetura componentizada e limpa</Text>
+            {/* Tab Bar */}
+            <View style={styles.tabBar}>
+                {TABS.map(tab => (
+                    <TouchableOpacity
+                        key={tab.key}
+                        style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+                        onPress={() => setActiveTab(tab.key)}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
+                            {tab.label}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
 
-                <View style={styles.card}>
-                    <Text style={styles.label}>Buscar Anime</Text>
-                    <View style={styles.searchRow}>
-                        <TextInput
-                            style={[styles.input, { flex: 1, marginBottom: 0 }]}
-                            placeholder="Ex: Naruto, Jujutsu, Cyberpunk..."
-                            placeholderTextColor="#64748b"
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                        />
-                        <TouchableOpacity style={styles.searchButton} onPress={searchAnime}>
-                            <Text style={styles.searchButtonText}>🔍</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {loading && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 12 }} />}
-                    {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
-                </View>
+            {/* Aba Início */}
+            {activeTab === 'home' && (
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <Text style={styles.headerTitle}>
+                        Baka<Text style={styles.brandText}>Timer</Text>
+                    </Text>
+                    <Text style={styles.headerSubtitle}>Calculadora de maratona</Text>
 
-                {animeData && (
-                    <AnimeCard
-                        animeData={animeData}
-                        currentEp={currentEp}
-                        setCurrentEp={setCurrentEp}
-                    />
-                )}
-
-                {animeData && (
-                    <>
-                        <View style={styles.card}>
-                            <Text style={styles.cardTitle}>Configurações da Maratona</Text>
-
-                            <OptionCheckbox
-                                label="Pular Openings/Endings (-3 min) e"
-                                checked={skipOpenings}
-                                onPress={() => setSkipOpenings(!skipOpenings)}
+                    <View style={styles.card}>
+                        <Text style={styles.label}>Buscar Anime</Text>
+                        <View style={styles.searchRow}>
+                            <TextInput
+                                style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                                placeholder="Ex: Naruto, Jujutsu, Cyberpunk..."
+                                placeholderTextColor="#64748b"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                onSubmitEditing={searchAnime}
+                                returnKeyType="search"
                             />
-
-                            <OptionCheckbox
-                                label="Pular Recaps (-2 min) e"
-                                checked={skipRecaps}
-                                onPress={() => setSkipRecaps(!skipRecaps)}
-                            />
+                            <TouchableOpacity style={styles.searchButton} onPress={searchAnime}>
+                                <Text style={styles.searchButtonText}>🔍</Text>
+                            </TouchableOpacity>
                         </View>
-
-                        <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={calculateTime}>
-                            <Text style={styles.buttonText}>Calcular Tempo Restante 🚀</Text>
-                        </TouchableOpacity>
-                    </>
-                )}
-
-                {result && (
-                    <View style={styles.resultCard}>
-                        <Text style={styles.resultValue}>{result}</Text>
+                        {loading && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 12 }} />}
+                        {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
                     </View>
-                )}
-            </ScrollView>
+
+                    {animeData && (
+                        <AnimeCard
+                            animeData={animeData}
+                            currentEp={currentEp}
+                            setCurrentEp={setCurrentEp}
+                        />
+                    )}
+
+                    {animeData && (
+                        <>
+                            <View style={styles.card}>
+                                <Text style={styles.cardTitle}>Configurações da Maratona</Text>
+
+                                <OptionCheckbox
+                                    label="Pular Openings/Endings (-3 min)"
+                                    checked={skipOpenings}
+                                    onPress={() => setSkipOpenings(!skipOpenings)}
+                                />
+                                <OptionCheckbox
+                                    label="Pular Recaps (-2 min)"
+                                    checked={skipRecaps}
+                                    onPress={() => setSkipRecaps(!skipRecaps)}
+                                />
+                            </View>
+
+                            <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={calculateTime}>
+                                <Text style={styles.buttonText}>Calcular Tempo Restante </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={addAnimeToCalendar}>
+                                <Text style={styles.buttonText}>Adicionar Anime ao Calendário</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+
+                    {result && (
+                        <View style={styles.resultCard}>
+                            <Text style={styles.resultValue}>{result}</Text>
+                        </View>
+                    )}
+                </ScrollView>
+            )}
+
+            {/* Aba Calendário */}
+            {activeTab === 'calendario' && <AbaCalendario />}
         </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    scrollContainer: { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
+
+    // Tab Bar
+    tabBar: {
+        flexDirection: 'row',
+        marginHorizontal: 24,
+        marginTop: 56,
+        marginBottom: 8,
+        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        borderRadius: 12,
+        padding: 4,
+        borderWidth: 1,
+        borderColor: COLORS.cardBorder,
+    },
+    tab: {
+        flex: 1,
+        paddingVertical: 10,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    tabActive: {
+        backgroundColor: COLORS.primary,
+    },
+    tabText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: COLORS.textMuted,
+    },
+    tabTextActive: {
+        color: '#ffffff',
+    },
+
+    // Conteúdo
+    scrollContainer: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
     headerTitle: { fontSize: 28, fontWeight: '800', color: COLORS.textMain, letterSpacing: 0.5 },
     brandText: { color: COLORS.primary },
     headerSubtitle: { fontSize: 14, color: COLORS.textMuted, marginTop: 4, marginBottom: 24 },
-    card: { backgroundColor: COLORS.cardBackground, borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'COLORS.cardBorder' },
+    card: {
+        backgroundColor: COLORS.cardBackground,
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: COLORS.cardBorder, // bug corrigido
+    },
     cardTitle: { fontSize: 16, fontWeight: '700', color: COLORS.textMain, marginBottom: 16 },
     label: { fontSize: 14, fontWeight: '600', color: COLORS.textLabel, marginBottom: 8 },
     searchRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-    input: { backgroundColor: COLORS.inputBackground, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 12, color: COLORS.textMain, fontSize: 15, borderWidth: 1, borderColor: COLORS.inputBorder },
-    searchButton: { backgroundColor: COLORS.primary, borderRadius: 10, padding: 14, justifyContent: 'center', alignItems: 'center' },
+    input: {
+        backgroundColor: COLORS.inputBackground,
+        borderRadius: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: COLORS.textMain,
+        fontSize: 15,
+        borderWidth: 1,
+        borderColor: COLORS.inputBorder,
+    },
+    searchButton: {
+        backgroundColor: COLORS.primary,
+        borderRadius: 10,
+        padding: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     searchButtonText: { fontSize: 18 },
     errorText: { color: '#ef4444', marginTop: 10, fontWeight: '600' },
-    button: { backgroundColor: COLORS.primary, paddingVertical: 16, borderRadius: 14, alignItems: 'center', marginTop: 8 },
-    buttonText: { color: COLORS.textMain, fontSize: 16, fontWeight: '700' },
-    resultCard: { backgroundColor: COLORS.resultCardBg, borderRadius: 16, padding: 24, marginTop: 24, alignItems: 'center', borderWidth: 1, borderColor: COLORS.primary },
+    button: {
+        backgroundColor: COLORS.primary,
+        paddingVertical: 16,
+        borderRadius: 14,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    buttonText: { color: COLORS.textMain, fontSize: 15, fontWeight: '700' },
+    resultCard: {
+        backgroundColor: COLORS.resultBackground,
+        borderRadius: 16,
+        padding: 24,
+        marginTop: 24,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: COLORS.primary,
+    },
     resultValue: { fontSize: 18, fontWeight: '800', color: COLORS.textMain, textAlign: 'center' },
 });
