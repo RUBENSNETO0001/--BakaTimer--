@@ -110,7 +110,6 @@ export default function HomeScreen() {
         <LinearGradient colors={COLORS.backgroundGradient} style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#0f172a" />
 
-            {/* Tab Bar */}
             <View style={styles.tabBar}>
                 {TABS.map(tab => (
                     <TouchableOpacity
@@ -126,7 +125,6 @@ export default function HomeScreen() {
                 ))}
             </View>
 
-            {/* Aba Início */}
             {activeTab === 'home' && (
                 <ScrollView
                     contentContainerStyle={styles.scrollContainer}
@@ -199,7 +197,6 @@ export default function HomeScreen() {
                 </ScrollView>
             )}
 
-            {/* Aba Calendário */}
             {activeTab === 'calendario' && <AbaCalendario />}
         </LinearGradient>
     );

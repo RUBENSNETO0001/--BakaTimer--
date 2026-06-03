@@ -168,7 +168,7 @@ export default function AbaCalendario() {
 
                         <Text style={styles.inputLabel}>Cor</Text>
                         <View style={styles.colorRow}>
-                            {/* Correção aqui: mapeando as cores corretamente */}
+                            {/* Correção aqui: Saudade da minha ex*/}
                             {CORES_SELECAO.map(c => (
                                 <TouchableOpacity
                                     key={c}
