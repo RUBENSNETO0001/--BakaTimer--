@@ -14,9 +14,38 @@ const TABS = [
     { key: 'calendario', label: '📅 Calendário' },
 ];
 
+const ANILIST_QUERY = `
+query ($search: String) {
+  Page(perPage: 10) {
+    media(search: $search, type: ANIME, sort: SEARCH_MATCH) {
+      title { romaji english }
+      episodes
+      duration
+      coverImage { large }
+      status
+      format
+      nextAiringEpisode { episode }
+    }
+  }
+}
+`;
+
+async function searchAniList(query) {
+    const response = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ query: ANILIST_QUERY, variables: { search: query } }),
+    });
+    const json = await response.json();
+    return json?.data?.Page?.media ?? [];
+}
+
+const TABS_DATA = TABS;
+
 export default function HomeScreen() {
     const [activeTab, setActiveTab] = useState('home');
     const [pendingAnime, setPendingAnime] = useState(null);
+    const [pendingStartEp, setPendingStartEp] = useState(0);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [currentEp, setCurrentEp] = useState('');
@@ -33,28 +62,45 @@ export default function HomeScreen() {
         setErrorMsg(null);
         setAnimeData(null);
         setResult(null);
+        setCurrentEp('');
 
         try {
-            const response = await fetch(
-                `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchQuery)}&limit=10&type=tv`
-            );
-            const json = await response.json();
+            const results = await searchAniList(searchQuery.trim());
 
-            if (json.data && json.data.length > 0) {
-                const query = searchQuery.trim().toLowerCase();
-                const best = json.data.find(a =>
-                    a.title.toLowerCase() === query ||
-                    a.title_english?.toLowerCase() === query
-                ) || json.data[0];
+            if (results.length > 0) {
+                // Tenta achar match exato pelo título, senão usa o primeiro
+                const ql = searchQuery.trim().toLowerCase();
+                const best = results.find(a =>
+                    a.title.romaji?.toLowerCase() === ql ||
+                    a.title.english?.toLowerCase() === ql
+                ) || results[0];
 
-                const durationMatch = best.duration ? best.duration.match(/\d+/) : null;
-                const detectedMinutes = durationMatch ? parseInt(durationMatch[0]) : 24;
+                const title = best.title.english || best.title.romaji;
+                const duration = best.duration ?? 24;
+
+                // Se total de eps é null mas está em lançamento,
+                // usa nextAiringEpisode para saber quantos eps já saíram
+                let episodes = null;
+                let episodesReleased = null;
+                let releasing = false;
+
+                if (best.format === 'MOVIE') {
+                    episodes = 1;
+                } else if (best.episodes) {
+                    episodes = best.episodes;
+                } else if (best.nextAiringEpisode) {
+                    episodesReleased = best.nextAiringEpisode.episode - 1;
+                    releasing = true;
+                }
 
                 setAnimeData({
-                    title: best.title,
-                    episodes: best.episodes,
-                    imageUrl: best.images.jpg.image_url,
-                    duration: detectedMinutes,
+                    title,
+                    episodes,
+                    episodesReleased,
+                    releasing,
+                    imageUrl: best.coverImage.large,
+                    duration,
+                    status: best.status,
                 });
             } else {
                 setErrorMsg('Anime não encontrado!');
@@ -69,14 +115,16 @@ export default function HomeScreen() {
     const calculateTime = () => {
         if (!animeData) return;
         const current = parseInt(currentEp) || 0;
-        const total = animeData.episodes;
+
+        // Usa o total definitivo ou, se em lançamento, quantos eps já saíram
+        const total = animeData.episodes ?? animeData.episodesReleased;
 
         if (!total) {
-            setResult('Este anime ainda está em lançamento ou não tem total de eps definido!');
+            setResult('Este anime ainda está em lançamento e não tem episódios registrados!');
             return;
         }
         if (total <= current) {
-            setResult('Você já terminou ou passou do episódio final!');
+            setResult('Você já terminou ou passou do episódio disponível!');
             return;
         }
 
@@ -102,16 +150,22 @@ export default function HomeScreen() {
             setResult('Não é possível adicionar animes sem número total de episódios!');
             return;
         }
+        const current = parseInt(currentEp) || 0;
         setPendingAnime(animeData);
+        setPendingStartEp(current);
         setActiveTab('calendario');
     };
+
+    const epHint = animeData && parseInt(currentEp) > 0
+        ? `Você vai assistir a partir do ep ${parseInt(currentEp) + 1} (${animeData.episodes - parseInt(currentEp)} eps restantes)`
+        : null;
 
     return (
         <LinearGradient colors={COLORS.backgroundGradient} style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#0f172a" />
 
             <View style={styles.tabBar}>
-                {TABS.map(tab => (
+                {TABS_DATA.map(tab => (
                     <TouchableOpacity
                         key={tab.key}
                         style={[styles.tab, activeTab === tab.key && styles.tabActive]}
@@ -160,6 +214,7 @@ export default function HomeScreen() {
                             animeData={animeData}
                             currentEp={currentEp}
                             setCurrentEp={setCurrentEp}
+                            epHint={epHint}
                         />
                     )}
 
@@ -184,7 +239,7 @@ export default function HomeScreen() {
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.buttonSecondary} activeOpacity={0.8} onPress={addAnimeToCalendar}>
-                                <Text style={styles.buttonSecondaryText}>📅 Adicionar ao Calendário</Text>
+                                <Text style={styles.buttonSecondaryText}>Adicionar ao Calendário</Text>
                             </TouchableOpacity>
                         </>
                     )}
@@ -200,7 +255,8 @@ export default function HomeScreen() {
             {activeTab === 'calendario' && (
                 <AbaCalendario
                     pendingAnime={pendingAnime}
-                    onPendingConsumed={() => setPendingAnime(null)}
+                    pendingStartEp={pendingStartEp}
+                    onPendingConsumed={() => { setPendingAnime(null); setPendingStartEp(0); }}
                 />
             )}
         </LinearGradient>
