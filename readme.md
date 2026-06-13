@@ -61,3 +61,5 @@ iniciar no celular no app do expo go
 ## Caso de algum error no Ngrok
 
 - npx ngrok config add-authtoken 2eEOvbibw60y01yZ1BRkA2ejgfG_3i7BKuZBR3rzKCE4cGwdS
+
+- npx ngrok authtoken 2eEOvbibw60y01yZ1BRkA2ejgfG_3i7BKuZBR3rzKCE4cGwdS

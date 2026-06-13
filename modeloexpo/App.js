@@ -17,7 +17,8 @@ export default function WelcomeScreen() {
                 <Text style={styles.title}>
                     Bem-vindo à <Text style={styles.brandText}>BakaTime</Text>
                 </Text>
-                <Text style={styles.subtitle}>O BakaTimer é uma calculadora de maratona ultra minimalista e direta.</Text>
+                <Text style={styles.subtitle}>O BakaTimer é uma extensão do calendário para calcular o tempo de maratona de um anime, ultra minimalista e direta.</Text>
+                <Text style={styles.subtitle}>Versão alpha <Text style={styles.brandText}>v0.8</Text></Text>
             </View>
 
             <TouchableOpacity
@@ -74,5 +75,5 @@ const styles = StyleSheet.create({
         color: '#0f172a',
         fontSize: 18,
         fontWeight: '700',
-    },
+    }
 });

@@ -4,14 +4,16 @@ import {
     ScrollView, StatusBar, ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS } from './css/themes';
+import { COLORS } from '../../themes/themes';
 import OptionCheckbox from './components/OptionCheckbox';
 import AnimeCard from './components/AnimeCard';
 import AbaCalendario from './components/AbaCalendario';
+import AbaSobrenos from './components/AbaSobrenos';
 
 const TABS = [
     { key: 'home', label: '🏠 Início' },
     { key: 'calendario', label: '📅 Calendário' },
+    { key: 'sobrenos', label: '👥 Sobre Nós' },
 ];
 
 const ANILIST_QUERY = `
@@ -68,7 +70,6 @@ export default function HomeScreen() {
             const results = await searchAniList(searchQuery.trim());
 
             if (results.length > 0) {
-                // Tenta achar match exato pelo título, senão usa o primeiro
                 const ql = searchQuery.trim().toLowerCase();
                 const best = results.find(a =>
                     a.title.romaji?.toLowerCase() === ql ||
@@ -78,8 +79,6 @@ export default function HomeScreen() {
                 const title = best.title.english || best.title.romaji;
                 const duration = best.duration ?? 24;
 
-                // Se total de eps é null mas está em lançamento,
-                // usa nextAiringEpisode para saber quantos eps já saíram
                 let episodes = null;
                 let episodesReleased = null;
                 let releasing = false;
@@ -115,8 +114,6 @@ export default function HomeScreen() {
     const calculateTime = () => {
         if (!animeData) return;
         const current = parseInt(currentEp) || 0;
-
-        // Usa o total definitivo ou, se em lançamento, quantos eps já saíram
         const total = animeData.episodes ?? animeData.episodesReleased;
 
         if (!total) {
@@ -258,6 +255,10 @@ export default function HomeScreen() {
                     pendingStartEp={pendingStartEp}
                     onPendingConsumed={() => { setPendingAnime(null); setPendingStartEp(0); }}
                 />
+            )}
+
+            {activeTab === 'sobrenos' && (
+                <AbaSobrenos/>
             )}
         </LinearGradient>
     );
