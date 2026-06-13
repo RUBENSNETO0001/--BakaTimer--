@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../css/themes';
+import { COLORS } from '../../../themes/themes';
 
 export default function OptionCheckbox({ label, checked, onPress }) {
     return (

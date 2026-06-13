@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
-import { COLORS } from '../css/themes';
+import { COLORS } from '../../../themes/themes';
 
 export default function AnimeCard({ animeData, currentEp, setCurrentEp, epHint }) {
     // Monta o texto de episódios conforme o status

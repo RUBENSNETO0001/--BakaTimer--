@@ -4,7 +4,10 @@ import {
     ScrollView, Modal, TextInput, Alert, Platform, ActivityIndicator
 } from 'react-native';
 import * as Calendar from 'expo-calendar';
-import { COLORS } from '../css/themes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../../../themes/themes';
+
+const EVENTS_STORAGE_KEY = '@bakatimer_events';
 
 const MESES = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -57,6 +60,25 @@ export default function AbaCalendario({ pendingAnime, pendingStartEp = 0, onPend
     const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
     const [selectedDay, setSelectedDay] = useState(today.getDate());
     const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const saved = await AsyncStorage.getItem(EVENTS_STORAGE_KEY);
+                if (saved) {
+                    setEvents(JSON.parse(saved));
+                }
+            } catch (e) {
+                console.log('Erro ao carregar eventos salvos:', e);
+            }
+        })();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events)).catch(e =>
+            console.log('Erro ao salvar eventos:', e)
+        );
+    }, [events]);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [startEp, setStartEp] = useState('1');

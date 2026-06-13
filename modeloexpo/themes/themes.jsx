@@ -4,7 +4,7 @@ export const COLORS = {
     cardBorder: 'rgba(255, 255, 255, 0.05)',
     inputBackground: '#0f172a',
     inputBorder: 'rgba(255, 255, 255, 0.1)',
-    primary: '#f97316', // Laranja otaku
+    primary: '#f97316',
     textMain: '#ffffff',
     textMuted: '#94a3b8',
     textLabel: '#cbd5e1',
