@@ -23,7 +23,7 @@ export default function WelcomeScreen() {
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => router.push('./app/(aplicativo)/home')}
+                onPress={() => router.push('./(aplicativo)/home')}
                 activeOpacity={0.8}
             >
                 <Text style={styles.buttonText}>Entrar</Text>
