@@ -18,7 +18,7 @@ export default function WelcomeScreen() {
                     Bem-vindo à <Text style={styles.brandText}>BakaTime</Text>
                 </Text>
                 <Text style={styles.subtitle}>O BakaTimer é uma extensão do calendário para calcular o tempo de maratona de um anime, ultra minimalista e direta.</Text>
-                <Text style={styles.subtitle}>Versão alpha <Text style={styles.brandText}>v0.8</Text></Text>
+                <Text style={styles.subtitle}>Versão alpha <Text style={styles.brandText}>v1.0</Text></Text>
             </View>
 
             <TouchableOpacity

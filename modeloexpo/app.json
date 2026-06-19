@@ -14,7 +14,8 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ruren.modeloexpo"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -22,6 +23,12 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aa525de8-99b4-40c2-9bdd-e602bfbd0433"
+      }
+    }
   }
 }

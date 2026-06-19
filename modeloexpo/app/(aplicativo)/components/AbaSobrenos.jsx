@@ -13,7 +13,7 @@ export default function AbaSobrenos() {
                 <Text style={styles.titulo}>Sobre Nós</Text>
                 
                 <Text style={styles.subtitulo}>
-                    Versão Alpha <Text style={styles.brandText}>v0.8</Text>
+                    Versão Alpha <Text style={styles.brandText}>v1.0</Text>
                 </Text>
                 
                 <Text style={styles.desenvolvedor}>Desenvolvido por Rubens Neto</Text>

@@ -11,9 +11,9 @@ import AbaCalendario from './components/AbaCalendario';
 import AbaSobrenos from './components/AbaSobrenos';
 
 const TABS = [
-    { key: 'home', label: '🏠 Início' },
-    { key: 'calendario', label: '📅 Calendário' },
-    { key: 'sobrenos', label: '👥 Sobre Nós' },
+    { key: 'home', label: 'Início' },
+    { key: 'calendario', label: 'Calendário' },
+    { key: 'sobrenos', label: 'Sobre Nós' },
 ];
 
 const ANILIST_QUERY = `
