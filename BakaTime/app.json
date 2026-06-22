@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "modeloexpo",
-    "slug": "modeloexpo",
+    "name": "BakaTime",
+    "slug": "BakaTime",
     "version": "1.0.0",
+    "icon": "./assets/meu-icone.png",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
@@ -13,7 +14,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/favicon.png",
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.ruren.modeloexpo"
     },
@@ -27,8 +29,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "aa525de8-99b4-40c2-9bdd-e602bfbd0433"
+        "projectId": "2132681a-0172-41ed-9aa1-ef88b91be31e"
       }
-    }
+    },
+    "owner": "ruren"
   }
 }
