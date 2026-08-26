@@ -153,35 +153,59 @@ export default function AbaCalendario({ pendingAnime, pendingStartEp = 0, onPend
             : `Vai do ep ${epInicioNum} até o ep ${animeParaAgendar.episodes} (${animeParaAgendar.episodes - epInicioNum + 1} eps)`
         : null;
 
+    // const handleSalvar = async () => {
+    //     if (!animeParaAgendar || previewSessoes.length === 0) return;
+    //     setSalvando(true);
+
+    //     try {
+    //         const { status } = await Calendar.requestCalendarPermissionsAsync();
+    //         if (status !== 'granted') {
+    //             Alert.alert('Permissão negada', 'Autorize o acesso ao calendário nas configurações.');
+    //             setSalvando(false);
+    //             return;
+    //         }
+
+    //         const calendarId = await getDefaultCalendarId();
+    //         if (!calendarId) {
+    //             Alert.alert('Erro', 'Não foi possível encontrar um calendário no dispositivo.');
+    //             setSalvando(false);
+    //             return;
+    //         }
+
+    //         for (const sessao of previewSessoes) {
+    //             await Calendar.createEventAsync(calendarId, {
+    //                 title: sessao.titulo,
+    //                 startDate: sessao.inicio,
+    //                 endDate: sessao.fim,
+    //                 notes: `${animeParaAgendar.title}\nEps ${sessao.epInicio}–${sessao.epFim} · ${sessao.duracaoMin} min\nAgendado pelo BakaTimer`,
+    //                 alarms: [{ relativeOffset: -15 }],
+    //             });
+    //         }
+
+    //         const novosEventos = previewSessoes.map(s => ({
+    //             day: s.inicio.getDate(),
+    //             month: s.inicio.getMonth(),
+    //             year: s.inicio.getFullYear(),
+    //             name: animeParaAgendar.title,
+    //             color: cor,
+    //             time: horario,
+    //             eps: `Eps ${s.epInicio}–${s.epFim}`,
+    //         }));
+
+    //         setEvents(prev => [...prev, ...novosEventos]);
+    //         setModalVisible(false);
+    //         Alert.alert('Agendado!', `${previewSessoes.length} sessão(ões) adicionada(s) ao calendário.`);
+    //     } catch (e) {
+    //         Alert.alert('Erro', 'Não foi possível salvar os eventos.');
+    //     } finally {
+    //         setSalvando(false);
+    //     }
+    // };
     const handleSalvar = async () => {
         if (!animeParaAgendar || previewSessoes.length === 0) return;
         setSalvando(true);
 
         try {
-            const { status } = await Calendar.requestCalendarPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permissão negada', 'Autorize o acesso ao calendário nas configurações.');
-                setSalvando(false);
-                return;
-            }
-
-            const calendarId = await getDefaultCalendarId();
-            if (!calendarId) {
-                Alert.alert('Erro', 'Não foi possível encontrar um calendário no dispositivo.');
-                setSalvando(false);
-                return;
-            }
-
-            for (const sessao of previewSessoes) {
-                await Calendar.createEventAsync(calendarId, {
-                    title: sessao.titulo,
-                    startDate: sessao.inicio,
-                    endDate: sessao.fim,
-                    notes: `${animeParaAgendar.title}\nEps ${sessao.epInicio}–${sessao.epFim} · ${sessao.duracaoMin} min\nAgendado pelo BakaTimer`,
-                    alarms: [{ relativeOffset: -15 }],
-                });
-            }
-
             const novosEventos = previewSessoes.map(s => ({
                 day: s.inicio.getDate(),
                 month: s.inicio.getMonth(),
@@ -194,14 +218,13 @@ export default function AbaCalendario({ pendingAnime, pendingStartEp = 0, onPend
 
             setEvents(prev => [...prev, ...novosEventos]);
             setModalVisible(false);
-            Alert.alert('Agendado!', `${previewSessoes.length} sessão(ões) adicionada(s) ao calendário.`);
+            Alert.alert('Agendado!', `${previewSessoes.length} sessão(ões) adicionada(s) ao seu calendário do app.`);
         } catch (e) {
-            Alert.alert('Erro', 'Não foi possível salvar os eventos.');
+            Alert.alert('Erro', 'Não foi possível salvar os eventos no aplicativo.');
         } finally {
             setSalvando(false);
         }
     };
-
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
             <Text style={styles.headerTitle}>
